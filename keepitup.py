@@ -19,8 +19,11 @@ ball = pygame.Rect(385, 385, 30, 30)
 #create player
 player = pygame.Rect(300, 750, 200, 20)
 
+#speed variables
 ball_speed_x = 5
 ball_speed_y = 5
+player_speed = 0
+
 #create loop for game
 while True:
     #handle input
@@ -28,16 +31,39 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        #when button is pressed
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                player_speed += 7
+            if event.key == pygame.K_LEFT:
+                player_speed -= 7
+        #when button is released
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RIGHT:
+                player_speed -= 7
+            if event.key == pygame.K_LEFT:
+                player_speed += 7
+
     #make the ball move
     ball.x += ball_speed_x
     ball.y += ball_speed_y 
-    
+
     #create boundaries for ball and make it "bounce" off walls
     if ball.top <= 0 or ball.bottom >= 800:
         ball_speed_y *= -1
     if ball.left <= 0 or ball.right >= 800:
         ball_speed_x *= -1
 
+    #interaction between ball and player
+    if ball.colliderect(player):
+        ball_speed_y *= -1
+
+    #player motion
+    player.x += player_speed
+    if player.right >= 800:
+        player.right = 800
+    if player.left <= 0:
+        player.left = 0
     #draw visuals
     window.fill(black)
     pygame.draw.ellipse(window, white, ball)
